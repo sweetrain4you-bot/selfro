@@ -152,6 +152,10 @@ dialog{border:0;border-radius:14px;padding:0;width:min(860px,calc(100vw - 32px))
 .howto li{margin:0}
 .howto p{margin:0;color:var(--muted)}
 .howto a{color:var(--ink)}
+.notice{margin:0;padding-left:1.1em;display:grid;gap:10px;line-height:1.65}
+.notice b{color:var(--ink)}
+.notice-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;border:1px solid var(--line);background:var(--ink-soft);border-radius:10px;padding:9px 12px;margin:0 0 12px;font-size:12.5px;line-height:1.55}
+.notice-bar .btn{margin-left:auto}
 .cta-end{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
 .cta-row .muted{color:var(--muted);font-size:13px}
 .cf{display:grid;gap:12px}
@@ -182,10 +186,12 @@ dialog::backdrop{background:rgba(10,15,30,.55)}
 .dlg-body h3{font-size:15px;margin:18px 0 8px}
 .dlg-body ol,.dlg-body ul{padding-left:1.3em;margin:0 0 8px}
 .dlg-body li{margin-bottom:6px}
-.fee{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:6px 0 10px}
+.fee{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:6px 0 10px}
 .fee div{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg)}
 .fee small{display:block;color:var(--muted);font-size:12px}
-.fee b{font-size:18px;font-variant-numeric:tabular-nums}
+.fee b{font-size:18px;font-variant-numeric:tabular-nums;display:block}
+.fee span{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.fee i{font-style:normal;font-variant-numeric:tabular-nums}
 .tbl{overflow-x:auto}
 .tbl table{border-collapse:collapse;width:100%;font-size:13px;min-width:460px}
 .tbl th,.tbl td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
@@ -224,7 +230,7 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
   </div>
   <div class="actions">
     <button class="btn" id="btnLawyer" type="button">담당변호사</button>
-    <button class="btn" id="btnGuide" type="button">접수 방법·비용 안내</button>
+    <button class="btn" id="btnGuide" type="button">안내·접수 방법·비용</button>
     <button class="btn" id="btnEvidence" type="button">증거서류 PDF</button>
     <button class="btn primary" id="btnPdf" type="button">소장 PDF 다운로드</button>
   </div>
@@ -237,6 +243,7 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
 
 <main class="wrap">
 <form class="form" id="form" autocomplete="on">
+  <div class="notice-bar"><span>이 사이트는 소송 준비를 돕는 도구이며 법적 효력이나 결과를 보장하지 않습니다.</span><button type="button" class="btn sm" id="btnNotice">꼭 읽어 주세요</button></div>
   <p class="hint" style="margin:0 0 12px">입력한 내용은 이 브라우저 안에서만 처리되며 어디로도 전송되지 않습니다. 처음에 채워진 값은 <b>예시</b>이니 본인 정보로 바꿔 주세요. <button type="button" class="btn ghost sm" id="btnClear">모두 지우기</button></p>
 
   <details class="sec" open>
@@ -312,7 +319,7 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
     <div class="body">
       <div class="f"><label for="extra">본인 사정 · 추가로 밝힐 사실</label>
         <textarea id="extra" name="extra" placeholder="예: 구매 당시 딜러사 직원으로부터 쿠폰은 기한 없이 쓸 수 있다는 설명을 들었습니다. 쿠폰 말소에 대해 문자나 우편 등 어떤 개별 안내도 받은 적이 없습니다."></textarea>
-        <p class="hint">적은 내용은 청구이유 ‘2. 피고의 일방적 쿠폰 말소’ 다음에 그대로 들어갑니다. 문단은 줄바꿈으로 나눕니다.</p></div>
+        <p class="hint">적은 내용은 청구이유 ‘2. 피고의 일방적 쿠폰 말소’ 다음에 그대로 들어갑니다. 문단은 줄바꿈으로 나눕니다. 여기 다 적지 않아도 됩니다. 나머지는 피고 답변서가 온 뒤 준비서면으로 내고 변론기일에 진술하면 됩니다.</p></div>
     </div>
   </details>
 
@@ -371,27 +378,35 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
 </main>
 
 <dialog id="guide">
-  <div class="dlg-head"><h2>접수 방법과 비용</h2><button class="btn sm" type="button" id="guideClose">닫기</button></div>
+  <div class="dlg-head"><h2>안내</h2><button class="btn sm" type="button" id="guideClose">닫기</button></div>
   <div class="dlg-tabs" role="tablist">
-    <button type="button" data-g="fee" aria-selected="true">비용</button>
+    <button type="button" data-g="use" aria-selected="true">꼭 읽어 주세요</button>
+    <button type="button" data-g="fee" aria-selected="false">비용</button>
     <button type="button" data-g="e" aria-selected="false">전자소송 접수</button>
     <button type="button" data-g="paper" aria-selected="false">방문 접수</button>
     <button type="button" data-g="after" aria-selected="false">접수 이후</button>
   </div>
   <div class="dlg-body">
-    <section data-gp="fee">
+    <section data-gp="use">
+      <ul class="notice">
+        <li><b>이 사이트는 도구입니다.</b> 소송을 하고 싶어도 어디서부터 해야 할지 막막한 피해자들을 돕기 위한 도구이며, 법적인 효력이나 소송 결과를 보장하지 않습니다. 소장 내용은 본인 사정에 맞게 확인하고 고쳐서 내 주세요.</li>
+        <li><b>왜 지급명령이 아니라 소장인가요?</b> 지급명령이라는 간편한 절차도 있지만, 피고가 이의하면 어차피 정식 소송으로 넘어갑니다. 피고가 이미 조정 결정에 이의한 사안이라 처음부터 소장을 쓰도록 만들었습니다.</li>
+        <li><b>소장에 다 못 담아도 괜찮습니다.</b> 소장에 적지 않은 사정은 피고가 답변서를 낸 뒤 <b>준비서면</b>으로 내고, 변론기일에 법정에서 말로 진술하면 됩니다. 소장은 청구취지와 핵심 사실만 분명하면 됩니다.</li>
+        <li><b>입력한 정보는 내 브라우저에만 남습니다.</b> 이 사이트는 입력값을 어디로도 보내지 않습니다. 담당변호사에게 상담을 신청할 때만 적은 내용이 전달됩니다.</li>
+      </ul>
+    </section>
+    <section data-gp="fee" hidden>
       <p>청구금액 <b id="feeAmt"></b> 기준 · 소액사건(3,000만 원 이하)</p>
       <div class="fee">
-        <div><small>인지대 (전자소송)</small><b id="feeStampE"></b></div>
-        <div><small>인지대 (방문 접수)</small><b id="feeStampP"></b></div>
-        <div><small>송달료 예납</small><b id="feeSvc"></b></div>
+        <div><small>전자소송</small><b id="feeTotE"></b><span>인지 <i id="feeStampE"></i> + 송달료 <i id="feeSvcE"></i></span></div>
+        <div><small>방문(종이) 접수</small><b id="feeTotP"></b><span>인지 <i id="feeStampP"></i> + 송달료 <i id="feeSvcP"></i></span></div>
       </div>
       <p class="hint" id="feeTotal"></p>
       <div class="tbl"><table>
         <thead><tr><th>항목</th><th>계산 방법</th><th>근거</th></tr></thead>
         <tbody>
           <tr><td>인지대</td><td>소가 1,000만 원 미만: 소가 × 0.5%. 1,000원 미만이면 1,000원, 100원 미만은 버림.<br>전자소송은 위 금액의 10분의 9.</td><td>민사소송 등 인지법 제2조, 제16조</td></tr>
-          <tr><td>송달료</td><td>소액사건: 당사자 수 × 10회분 × 1회 5,640원 (원고 1 + 피고 1 = 2명)</td><td>송달료규칙 처리예규 · 2026. 7. 1. 단가</td></tr>
+          <tr><td>송달료</td><td>소액사건(소가 3,000만 원 이하)은 당사자 수 × 10회분 × 1회 5,640원.<br><b>전자소송</b>: 전자송달을 받는 원고는 빼고 피고 1명만 셈 → 1 × 10 × 5,640원 = 56,400원<br><b>방문 접수</b>: 원고 1 + 피고 1 = 2명 → 2 × 10 × 5,640원 = 112,800원</td><td>송달료규칙의 시행에 따른 업무처리요령 · 2026. 7. 1. 단가</td></tr>
           <tr><td>남은 송달료</td><td>사건이 끝나면 쓰지 않은 금액은 원고 계좌로 돌려받습니다.</td><td></td></tr>
           <tr><td>승소 시</td><td>인지대·송달료는 판결의 소송비용 부담 부분에 따라 피고에게 받을 수 있습니다(소송비용액 확정 신청).</td><td>민사소송법 제98조, 제110조</td></tr>
         </tbody>
@@ -409,7 +424,7 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
         <li><b>소장 파일 첨부</b>: 다운로드한 <b>소장 PDF</b>를 올립니다.</li>
         <li><b>입증서류</b>: 갑 제1호증부터 차례로 서증 이름을 입력하고 파일을 하나씩 올립니다. 호증 번호는 소장에 적힌 것과 같게 맞춥니다.</li>
         <li><b>첨부서류</b>: 피고 법인등기사항증명서(인터넷등기소에서 발급, PDF 저장)를 올립니다.</li>
-        <li><b>인지대·송달료 납부</b>: 계좌이체, 카드, 가상계좌 중 선택합니다. 송달료 환급계좌를 입력합니다.</li>
+        <li><b>인지대·송달료 납부</b>: 계좌이체, 카드, 가상계좌 중 선택합니다. 송달료는 소액사건 전자소송 기준 <b class="svcRefE"></b>(피고 1명 × 10회분)입니다. 송달료 환급계좌를 입력합니다.</li>
         <li><b>제출</b> 후 사건번호(예: 2026가소○○○○○)를 확인합니다. 이후 법원 서류는 전자소송 사이트와 문자·이메일 알림으로 받습니다.</li>
       </ol>
       <p class="hint">전자소송은 인지대가 10% 적고, 서류를 출력하거나 법원에 갈 필요가 없어 권장합니다.</p>
@@ -438,6 +453,7 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
       <ol>
         <li><b>이행권고결정</b>: 소액사건은 법원이 변론 없이 피고에게 청구금액을 지급하라는 이행권고결정을 먼저 보낼 수 있습니다. 피고가 송달받고 2주 안에 이의하지 않으면 확정판결과 같은 효력이 생깁니다.</li>
         <li><b>피고 답변서</b>: 피고가 다투면 답변서가 오고 변론기일이 잡힙니다. 소액사건은 보통 기일 한 번으로 끝납니다.</li>
+        <li><b>준비서면</b>: 답변서에 반박하거나 소장에 적지 못한 사정이 있으면 변론기일 전에 준비서면으로 냅니다(전자소송은 서류제출 → 준비서면). 기일에는 그 내용을 법정에서 진술합니다.</li>
         <li><b>변론기일</b>: 원고 본인이 출석합니다. 배우자·직계혈족·형제자매는 법원 허가 없이 소송대리인이 될 수 있습니다(소액사건심판법 제8조, 가족관계 증명 필요).</li>
         <li><b>판결 후</b>: 승소하면 판결문으로 지급을 요청하고, 지급하지 않으면 강제집행을 신청할 수 있습니다.</li>
       </ol>
@@ -592,7 +608,9 @@ function stamp(amount){ if(amount<=0) return 0; let s;
   if(amount<1e7) s=amount*0.005; else if(amount<1e8) s=amount*0.0045+5000; else if(amount<1e9) s=amount*0.004+55000; else s=amount*0.0035+555000;
   s = s<1000?1000:Math.floor(s/100)*100; return s; }
 function stampE(amount){ const p=stamp(amount); if(!p) return 0; const e=Math.floor(p*0.9/100)*100; return Math.max(e,1000); }
-const SVC_UNIT = 5640, SVC_TIMES = 10, PARTIES = 2;
+const SVC_UNIT = 5640, SVC_TIMES = 10;
+const SVC_E = SVC_UNIT*SVC_TIMES*1;   // 전자소송: 전자송달받는 원고 제외, 피고 1명
+const SVC_P = SVC_UNIT*SVC_TIMES*2;   // 종이 접수: 원고 + 피고
 
 /* ---------- 증거 UI ---------- */
 function evLabel(e, v){
@@ -668,14 +686,13 @@ function build(){
   // 청구이유
   const R = [];
   R.push({h:'1. 이륜차 구매와 쿠폰 지급', p:[
-    `원고는 ${D(v.buyDate)} 피고가 제조·수입한 이륜자동차(${veh?esc(veh):'<span class="blank">차량번호</span>'}, 이하 ‘이 사건 이륜차’)를 피고 제품의 판매권을 가진 소외 ${B(v.dealer,'딜러사')}(이하 ‘딜러사’)로부터 구매하였습니다${ref('reg')}.`,
-    `피고는 판촉활동의 일환으로 피고 제품 구매자에게 이른바 ‘이륜차 초회 점검 쿠폰’(이하 ‘이 사건 쿠폰’)을 제공하였고, 원고도 이 사건 이륜차를 구매하면서 이 사건 쿠폰을 받았습니다${ref('coupon')}. 이 사건 쿠폰에는 별도의 유효기간이 표시되어 있지 않았고, 구매자는 이 쿠폰으로 엔진오일 교환 등 점검을 무상으로 받을 수 있었습니다.`
+    `원고는 ${D(v.buyDate)} 피고가 제조·수입한 이륜자동차(${veh?esc(veh):'<span class="blank">차량번호</span>'}, 이하 ‘이 사건 이륜차’)를 피고 제품의 판매권을 가진 소외 ${B(v.dealer,'딜러사')}로부터 구매하였습니다${ref('reg')}.`,
+    `피고는 판촉활동의 일환으로 피고 제품 구매자에게 이른바 ‘이륜차 초회 점검 쿠폰’(이하 ‘이 사건 쿠폰’)을 제공하였고, 원고도 이 사건 이륜차를 구매하면서 이 사건 쿠폰을 받았습니다${ref('coupon')}.`
   ]});
   const p2 = [
     unused
       ? `그런데 피고는 ${REVOKE} 원고가 아직 사용하지 않은 이 사건 쿠폰의 사용 권한을 원고에게 알리지 않은 채 일방적으로 말소하였습니다. 이로써 원고는 더 이상 이 사건 쿠폰을 사용할 수 없게 되었습니다.`
-      : `원고는 ${D(v.visitDate)} 이 사건 이륜차의 엔진오일 교환을 위하여 피고 제품을 취급하는 정비업소에 방문하여 이 사건 쿠폰의 사용을 요청하였으나, 피고가 이미 ${REVOKE} 원고의 이 사건 쿠폰의 사용 권한을 일방적으로 말소하였다는 사실을 그때 처음 알게 되었습니다.`,
-    `원고는 쿠폰 말소에 관하여 피고로부터 어떠한 개별 통지나 안내도 받은 사실이 없습니다.`
+      : `원고는 ${D(v.visitDate)} 이 사건 이륜차의 엔진오일 교환을 위하여 피고 제품을 취급하는 정비업소에 방문하여 이 사건 쿠폰의 사용을 요청하였으나, 피고가 이미 ${REVOKE} 원고의 이 사건 쿠폰의 사용 권한을 일방적으로 말소하였다는 사실을 그때 처음 알게 되었습니다.`
   ];
   const extra = (v.extra||'').split(/\n+/).map(s=>s.trim()).filter(Boolean).map(s=>`<span class="user">${esc(s)}</span>`);
   R.push({h:'2. 피고의 일방적 쿠폰 말소', p:p2.concat(extra)});
@@ -785,15 +802,19 @@ function update(){
 }
 function fees(){
   const a = last ? last.amt : 0;
-  const se = stampE(a), sp = stamp(a), svc = SVC_UNIT*SVC_TIMES*PARTIES;
+  const se = stampE(a), sp = stamp(a);
   $('#feeAmt').textContent = a?won(a):'(미입력)';
   $('#feeStampE').textContent = a?won(se):'-';
   $('#feeStampP').textContent = a?won(sp):'-';
-  $('#feeSvc').textContent = won(svc);
-  $('#feeTotal').textContent = a?`납부 합계: 전자소송 ${won(se+svc)} · 방문 접수 ${won(sp+svc)} (송달료 = 2명 × 10회 × 5,640원)`:'';
+  $('#feeSvcE').textContent = won(SVC_E);
+  $('#feeSvcP').textContent = won(SVC_P);
+  $('#feeTotE').textContent = a?won(se+SVC_E):'-';
+  $('#feeTotP').textContent = a?won(sp+SVC_P):'-';
+  $('#feeTotal').textContent = a?`전자소송이 ${won(sp+SVC_P-se-SVC_E)} 적게 듭니다. 쓰지 않은 송달료는 사건이 끝나면 돌려받습니다.`:'';
   $$('.courtRef').forEach(e=>e.textContent = (last&&last.court)||'관할법원');
   $$('.amtRef').forEach(e=>e.textContent = a?won(a):'청구금액');
-  $$('.svcRef').forEach(e=>e.textContent = won(svc));
+  $$('.svcRef').forEach(e=>e.textContent = won(SVC_P));
+  $$('.svcRefE').forEach(e=>e.textContent = won(SVC_E));
   $$('.stampRef').forEach(e=>e.textContent = a?won(sp):'');
 }
 
@@ -1069,7 +1090,9 @@ $('#cfSend').addEventListener('click', async ()=>{
 });
 
 const dlg = $('#guide');
-$('#btnGuide').addEventListener('click', ()=>{ fees(); dlg.showModal(); });
+function openGuide(tab){ fees(); const b = document.querySelector(`.dlg-tabs button[data-g="${tab}"]`); if(b) b.click(); dlg.showModal(); }
+$('#btnGuide').addEventListener('click', ()=>openGuide('use'));
+$('#btnNotice').addEventListener('click', ()=>openGuide('use'));
 $('#guideClose').addEventListener('click', ()=>dlg.close());
 dlg.addEventListener('click', e=>{ if(e.target===dlg) dlg.close(); });
 $$('.dlg-tabs button').forEach(b=>b.addEventListener('click',()=>{
