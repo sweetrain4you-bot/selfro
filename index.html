@@ -320,7 +320,7 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
   </details>
 
   <details class="sec" open>
-    <summary><span class="n">6</span>증거(서증)와 첨부파일<span class="chev">›</span></summary>
+    <summary><span class="n">6</span>증거(서증)<span class="chev">›</span></summary>
     <div class="body">
       <p class="hint">체크된 항목만 순서대로 갑 제1호증, 제2호증…으로 번호가 붙고, 적은 이름이 소장 본문과 입증방법에 그대로 들어갑니다. 증거 파일은 전자소송에서 서증을 올릴 때 같은 번호·이름으로 하나씩 올리세요.</p>
       <div class="ev" id="evList"></div>
@@ -329,12 +329,8 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
   </details>
 
   <details class="sec">
-    <summary><span class="n">7</span>작성일·접수 방식·피고 정보<span class="chev">›</span></summary>
+    <summary><span class="n">7</span>작성일·피고 정보<span class="chev">›</span></summary>
     <div class="body">
-      <div class="seg" role="radiogroup" aria-label="접수 방식">
-        <label><input type="radio" name="filing" value="e" checked>전자소송</label>
-        <label><input type="radio" name="filing" value="paper">방문(종이) 접수</label>
-      </div>
       <p class="hint">작성일은 오늘 날짜로 들어갑니다. 다른 날짜로 내려면 미리보기 위의 [초안 직접 고치기]로 고쳐 주세요.</p>
       <div class="f"><label for="dName">피고 상호</label><input id="dName" name="dName"></div>
       <div class="f"><label for="dAddr">피고 본점 주소</label><input id="dAddr" name="dAddr"></div>
@@ -431,7 +427,7 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
       <p>관할법원 <b class="courtRef"></b> 종합민원실(민사 접수)에 직접 냅니다.</p>
       <h3>준비물</h3>
       <ul>
-        <li>소장 정본 1부 + 부본 1부(피고 수만큼). 서명 또는 날인합니다. 작성기에서 ‘방문(종이) 접수’를 고르면 첨부서류가 맞게 바뀝니다.</li>
+        <li>소장 정본 1부 + 부본 1부(피고 수만큼). 이름 옆에 서명 또는 날인합니다. 소장의 첨부서류에는 [초안 직접 고치기]로 ‘위 입증방법 각 2통, 소장 부본 1통, 송달료납부서 1통’을 더 적어 주세요.</li>
         <li>갑호증 사본 각 2부(법원용, 피고용). 각 사본 오른쪽 위에 ‘갑 제1호증’처럼 소장과 같은 번호를 적습니다.</li>
         <li>피고 법인등기사항증명서 1통</li>
         <li>신분증, 도장(서명도 가능)</li>
@@ -551,7 +547,6 @@ const DEF = {
   buyDate:"2023-10-25", regNo:"대구수성 카0000", model:"", dealer:"주식회사 ○○모터스",
   dmgType:"refused", visitDate:"2025-08-27", amount:"200000",
   medMode:"ref", medNo:"", medDate:"", medAmt:"", extra:"",
-  filing:"e",
   dName:"혼다코리아 주식회사", dAddr:"서울 강남구 테헤란로114길 38, 13층(대치동)", dRep:"이지홍"
 };
 const EV_DEF = [
@@ -698,9 +693,7 @@ function build(){
   R.push({h:`${v.medMode==='own'?5:4}. 결론`, p:[`따라서 피고는 원고에게 ${amtTxt} 및 이에 대한 지연손해금을 지급할 의무가 있으므로, 원고는 청구취지와 같은 판결을 구하기 위하여 이 사건 소를 제기합니다.`]});
 
   const evList = evs.filter(e=>e.on && applies(e,v)).map(e=>({no:nums[e.key], name: evLabel(e,v) || '(증거 이름)'}));
-  const attach = v.filing==='paper'
-    ? ['위 입증방법 각 2통','법인등기사항증명서(피고) 1통','소장 부본 1통','송달료납부서 1통']
-    : ['법인등기사항증명서(피고) 1통'];
+  const attach = ['법인등기사항증명서(피고) 1통'];
   const dateStr = docDateText(v).replace(/ {2,}/g, m=>'&nbsp;'.repeat(m.length));
 
   const html = `
@@ -724,7 +717,7 @@ function build(){
     <h3>첨부서류</h3>
     <div class="list">${attach.map((a,i)=>`<div><span>${i+1}.</span><span style="grid-column:2 / 4">${a}</span></div>`).join('')}</div>
     <p class="date">${dateStr}</p>
-    <p class="sign">위 원고&nbsp;&nbsp;${B(v.pName,'성명')}&nbsp;&nbsp;${v.filing==='paper'?'(서명 또는 날인)':''}</p>
+    <p class="sign">위 원고&nbsp;&nbsp;${B(v.pName,'성명')}</p>
     <p class="court">${court?esc(court):'<span class="blank">○○지방법원</span>'}&nbsp;&nbsp;귀중</p>`;
 
   return {v, amt, html, court, auto};
@@ -930,7 +923,7 @@ let clearArmed=false;
 $('#btnClear').addEventListener('click', e=>{
   if(!clearArmed){ clearArmed=true; e.target.textContent='한 번 더 누르면 지웁니다'; setTimeout(()=>{clearArmed=false; e.target.textContent='모두 지우기';},3000); return; }
   clearArmed=false; e.target.textContent='모두 지우기';
-  const keep = {dName:DEF.dName, dAddr:DEF.dAddr, dRep:DEF.dRep, dmgType:'refused', medMode:'ref', filing:'e'};
+  const keep = {dName:DEF.dName, dAddr:DEF.dAddr, dRep:DEF.dRep, dmgType:'refused', medMode:'ref'};
   const blank = Object.fromEntries(Object.keys(DEF).map(k=>[k, typeof DEF[k]==='boolean'?false:'']));
   editedHtml = null; editMode = false;
   fillForm({...blank, ...keep}); evs = EV_DEF.map(x=>({...x})); renderEv(); update(); toast('입력을 지웠습니다');
