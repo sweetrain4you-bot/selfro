@@ -98,10 +98,6 @@ button,input,select,textarea{font:inherit;color:inherit}
 .ev-head{display:flex;gap:8px;align-items:center}
 .ev-head .no{font-family:var(--doc);font-weight:800;color:var(--seal);font-size:12.5px;white-space:nowrap;min-width:72px}
 .ev-head input[type=text]{flex:1;min-width:0;border:1px solid var(--line);border-radius:6px;padding:5px 8px;background:var(--panel)}
-.ev-files{font-size:12px;color:var(--muted);display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-.ev-files .file{background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:1px 8px}
-.ev-files label.up{color:var(--ink);cursor:pointer;font-weight:600}
-.ev-files input[type=file]{display:none}
 .x{border:0;background:none;cursor:pointer;color:var(--muted);font-size:16px;line-height:1}
 
 .pv-bar{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:0 auto 14px;max-width:794px}
@@ -234,7 +230,6 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
   <div class="actions">
     <button class="btn" id="btnLawyer" type="button">담당변호사</button>
     <button class="btn" id="btnGuide" type="button">안내·접수 방법·비용</button>
-    <button class="btn" id="btnEvidence" type="button">증거서류 PDF</button>
     <button class="btn primary" id="btnPdf" type="button">소장 PDF 다운로드</button>
   </div>
 </header>
@@ -311,7 +306,7 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
         </div>
         <div class="f"><label for="medAmt">결정 금액 (원)</label><input id="medAmt" name="medAmt" inputmode="numeric" placeholder="비우면 청구금액과 같게 기재"></div>
       </div>
-      <p class="hint" id="medOwnHint" hidden>본인 결정문이 증거 목록에 추가됩니다. 6번에서 결정문 파일을 첨부해 주세요.</p>
+      <p class="hint" id="medOwnHint" hidden>본인 결정문이 증거 목록에 추가됩니다. 전자소송에서 결정문 파일을 서증으로 함께 올려 주세요.</p>
       <p class="hint" id="medRefHint">결정문을 첨부하지 않고, 소장 본문에도 조정 결정 내용을 넣지 않습니다.</p>
     </div>
   </details>
@@ -328,7 +323,7 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
   <details class="sec" open>
     <summary><span class="n">6</span>증거(서증)와 첨부파일<span class="chev">›</span></summary>
     <div class="body">
-      <p class="hint">체크된 항목만 순서대로 갑 제1호증, 제2호증…으로 번호가 붙고 소장 본문에도 반영됩니다. 파일(JPG·PNG·PDF)을 넣으면 ‘증거서류 PDF’로 호증 번호가 찍힌 묶음을 만들 수 있습니다.</p>
+      <p class="hint">체크된 항목만 순서대로 갑 제1호증, 제2호증…으로 번호가 붙고, 적은 이름이 소장 본문과 입증방법에 그대로 들어갑니다. 증거 파일은 전자소송에서 서증을 올릴 때 같은 번호·이름으로 하나씩 올리세요.</p>
       <div class="ev" id="evList"></div>
       <button type="button" class="btn sm" id="evAdd">+ 증거 추가</button>
     </div>
@@ -441,7 +436,7 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
       <h3>준비물</h3>
       <ul>
         <li>소장 정본 1부 + 부본 1부(피고 수만큼). 서명 또는 날인합니다. 작성기에서 ‘방문(종이) 접수’를 고르면 첨부서류가 맞게 바뀝니다.</li>
-        <li>갑호증 사본 각 2부(법원용, 피고용). ‘증거서류 PDF’로 호증 번호가 찍힌 묶음을 출력하면 편합니다.</li>
+        <li>갑호증 사본 각 2부(법원용, 피고용). 각 사본 오른쪽 위에 ‘갑 제1호증’처럼 소장과 같은 번호를 적습니다.</li>
         <li>피고 법인등기사항증명서 1통</li>
         <li>신분증, 도장(서명도 가능)</li>
       </ul>
@@ -507,7 +502,6 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
 <div class="toast" id="toast" role="status"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script>
 (function(){
 "use strict";
@@ -573,7 +567,7 @@ const EV_DEF = [
   {key:"receipt", name:"장비점검명세서", on:true},
   {key:"decision", name:"", on:true}
 ];
-let evs = EV_DEF.map(e=>({...e, files:[]}));
+let evs = EV_DEF.map(e=>({...e}));
 const STORE = "isilhyup-honda-complaint-v1";
 
 function loadSaved(){
@@ -642,26 +636,16 @@ function renderEv(){
         <span class="no">${nums[e.key]?`갑 제${nums[e.key]}호증`:'제외'}</span>
         <input type="text" id="evName${idx}" value="${esc(fixedName?evLabel(e,v):e.name)}" ${fixedName?'readonly title="조정 여부에 따라 자동 기재"':''} aria-label="증거 이름">
         ${e.key.startsWith('c')&&e.custom?`<button type="button" class="x" data-del="${idx}" aria-label="삭제">×</button>`:''}
-      </div>
-      <div class="ev-files">${e.files.map((f,fi)=>`<span class="file">${esc(f.name)} <button type="button" class="x" data-rm="${idx}:${fi}" aria-label="파일 빼기">×</button></span>`).join('')}
-        <label class="up" for="evFile${idx}">+ 파일 첨부</label><input type="file" id="evFile${idx}" accept="image/jpeg,image/png,application/pdf" multiple></div>`;
+      </div>`;
     box.appendChild(d);
     d.querySelector(`#evOn${idx}`).addEventListener('change',ev=>{ e.on=ev.target.checked; renderEv(); update(); });
     const nm = d.querySelector(`#evName${idx}`); if(!fixedName) nm.addEventListener('input',ev=>{ e.name=ev.target.value; update(); });
-    d.querySelector(`#evFile${idx}`).addEventListener('change',ev=>{
-      const fs = Array.from(ev.target.files||[]);
-      const bad = fs.filter(f=>!/^(image\/(jpeg|png)|application\/pdf)$/.test(f.type));
-      e.files.push(...fs.filter(f=>!bad.includes(f)));
-      if(bad.length) toast('JPG, PNG, PDF만 넣을 수 있습니다. 아이폰 사진(HEIC)은 JPG로 바꿔 주세요.');
-      renderEv();
-    });
   });
-  box.querySelectorAll('[data-rm]').forEach(b=>b.addEventListener('click',()=>{ const [i,fi]=b.dataset.rm.split(':').map(Number); evs[i].files.splice(fi,1); renderEv(); }));
   box.querySelectorAll('[data-del]').forEach(b=>b.addEventListener('click',()=>{ evs.splice(Number(b.dataset.del),1); renderEv(); update(); }));
 }
 let customN = 0;
 $('#evAdd').addEventListener('click',()=>{ customN++; const di = evs.findIndex(e=>e.key==='decision');
-  evs.splice(di<0?evs.length:di,0,{key:'c'+Date.now()+customN, custom:true, name:'', on:true, files:[]}); renderEv(); update();
+  evs.splice(di<0?evs.length:di,0,{key:'c'+Date.now()+customN, custom:true, name:'', on:true}); renderEv(); update();
   const inputs = $$('#evList input[type=text]'); const t = inputs[di<0?inputs.length-1:di]; if(t){ t.placeholder='예: 딜러사 직원과의 문자 내역'; t.focus(); } });
 
 /* 소장 맨 끝(‘위 원고 ○○○’ 바로 위)에 들어가는 작성일 */
@@ -875,51 +859,6 @@ async function makePdf(){
   }catch(e){ console.error(e); busy(false); toast('PDF를 만들지 못했습니다. 다시 시도해 주세요.'); }
 }
 
-/* ---------- 증거서류 PDF (호증 번호 표시) ---------- */
-function labelPng(text){
-  const c = document.createElement('canvas'); const s=3; c.width=170*s; c.height=44*s; const g=c.getContext('2d');
-  g.scale(s,s); g.fillStyle='#ffffff'; g.fillRect(0,0,170,44); g.strokeStyle='#b3261e'; g.lineWidth=2; g.strokeRect(2,2,166,40);
-  g.fillStyle='#b3261e'; g.font='800 20px "Nanum Myeongjo", "AppleMyungjo", serif'; g.textAlign='center'; g.textBaseline='middle'; g.fillText(text,85,23);
-  return c.toDataURL('image/png');
-}
-async function makeEvidence(){
-  if(!window.PDFLib){ toast('PDF 도구를 불러오지 못했습니다.'); return; }
-  update();
-  const nums = evNumbers();
-  const items = evs.filter(e=>e.on && e.files.length);
-  if(!items.length){ toast('6번 증거 항목에 파일을 먼저 첨부해 주세요.'); $('#evList').scrollIntoView({behavior:'smooth'}); return; }
-  busy(true,'증거서류 PDF를 만드는 중…');
-  try{
-    await (document.fonts && document.fonts.ready);
-    const {PDFDocument} = PDFLib; const out = await PDFDocument.create();
-    const A4=[595.28,841.89], M=36;
-    for(const e of items){
-      const lab = await out.embedPng(labelPng(`갑 제${nums[e.key]}호증`));
-      for(let fi=0; fi<e.files.length; fi++){
-        const f = e.files[fi]; const buf = await f.arrayBuffer();
-        const first = fi===0;
-        if(f.type==='application/pdf'){
-          const src = await PDFDocument.load(buf,{ignoreEncryption:true});
-          const pages = await out.copyPages(src, src.getPageIndices());
-          pages.forEach((p,pi)=>{ out.addPage(p); if(first && pi===0){ const {width,height}=p.getSize(); p.drawImage(lab,{x:width-130-20,y:height-34-20,width:130,height:34}); } });
-        } else {
-          const img = f.type==='image/png' ? await out.embedPng(buf) : await out.embedJpg(buf);
-          const page = out.addPage(A4);
-          const top = first?60:0;
-          const maxW=A4[0]-2*M, maxH=A4[1]-2*M-top;
-          const sc = Math.min(maxW/img.width, maxH/img.height, 1.5);
-          const w=img.width*sc, h=img.height*sc;
-          page.drawImage(img,{x:(A4[0]-w)/2, y:M+(maxH-h)/2, width:w, height:h});
-          if(first) page.drawImage(lab,{x:A4[0]-M-130,y:A4[1]-M-34,width:130,height:34});
-        }
-      }
-    }
-    const bytes = await out.save();
-    busy(false);
-    await saveFile(`증거서류_${(last&&last.v.pName)||'원고'}_갑호증.pdf`, new Blob([bytes],{type:'application/pdf'}));
-  }catch(e){ console.error(e); busy(false); toast('파일을 읽지 못했습니다. 암호가 걸린 PDF나 손상된 이미지가 없는지 확인해 주세요.'); }
-}
-
 /* ---------- 초기화 ---------- */
 const saved = loadSaved();
 fillForm(saved ? {...DEF, ...saved.v} : DEF);
@@ -990,7 +929,7 @@ function phoneInput(e){
   try{ el.setSelectionRange(i,i); }catch(_){}
 }
 $('#pPhone').addEventListener('input', phoneInput);
-if(saved && Array.isArray(saved.ev)) evs = saved.ev.map(e=>({...e, custom: e.key && e.key.startsWith('c') && !EV_DEF.some(d=>d.key===e.key), files:[]}));
+if(saved && Array.isArray(saved.ev)) evs = saved.ev.map(e=>({...e, custom: e.key && e.key.startsWith('c') && !EV_DEF.some(d=>d.key===e.key)}));
 renderEv(); update();
 
 $('#form').addEventListener('input', e=>{ if(e.target.closest('#evList')) return; update(); });
@@ -1007,11 +946,10 @@ $('#btnClear').addEventListener('click', e=>{
   const keep = {dName:DEF.dName, dAddr:DEF.dAddr, dRep:DEF.dRep, dmgType:'refused', medMode:'ref', filing:'e', dayBlank:'full'};
   const blank = Object.fromEntries(Object.keys(DEF).map(k=>[k, typeof DEF[k]==='boolean'?false:'']));
   editedHtml = null; editMode = false;
-  fillForm({...blank, ...keep}); evs = EV_DEF.map(x=>({...x, files:[]})); renderEv(); update(); toast('입력을 지웠습니다');
+  fillForm({...blank, ...keep}); evs = EV_DEF.map(x=>({...x})); renderEv(); update(); toast('입력을 지웠습니다');
 });
 
 $('#btnPdf').addEventListener('click', async e=>{ e.target.disabled=true; try{ await makePdf(); } finally{ e.target.disabled=false; } });
-$('#btnEvidence').addEventListener('click', async e=>{ e.target.disabled=true; try{ await makeEvidence(); } finally{ e.target.disabled=false; } });
 /* 초안 직접 고치기 */
 const docEl = $('#doc');
 $('#btnEdit').addEventListener('click', ()=>{
