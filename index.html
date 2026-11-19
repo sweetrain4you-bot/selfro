@@ -335,11 +335,7 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
         <label><input type="radio" name="filing" value="e" checked>전자소송</label>
         <label><input type="radio" name="filing" value="paper">방문(종이) 접수</label>
       </div>
-      <div class="row">
-        <div class="f"><label for="docDate">소장 작성일 (비우면 오늘)</label><input type="date" id="docDate" name="docDate"></div>
-        <div class="f"><label for="dayBlank">작성일 적는 방식</label><select id="dayBlank" name="dayBlank"><option value="full">날짜를 모두 적기</option><option value="blank">‘일’만 비워 두기</option></select></div>
-      </div>
-      <p class="hint" id="dateHint"></p>
+      <p class="hint">작성일은 오늘 날짜로 들어갑니다. 다른 날짜로 내려면 미리보기 위의 [초안 직접 고치기]로 고쳐 주세요.</p>
       <div class="f"><label for="dName">피고 상호</label><input id="dName" name="dName"></div>
       <div class="f"><label for="dAddr">피고 본점 주소</label><input id="dAddr" name="dAddr"></div>
       <div class="f"><label for="dRep">대표이사</label><input id="dRep" name="dRep"></div>
@@ -555,7 +551,7 @@ const DEF = {
   buyDate:"2023-10-25", regNo:"대구수성 카0000", model:"", dealer:"주식회사 ○○모터스",
   dmgType:"refused", visitDate:"2025-08-27", amount:"200000",
   medMode:"ref", medNo:"", medDate:"", medAmt:"", extra:"",
-  filing:"e", docDate:"", dayBlank:"full",
+  filing:"e",
   dName:"혼다코리아 주식회사", dAddr:"서울 강남구 테헤란로114길 38, 13층(대치동)", dRep:"이지홍"
 };
 const EV_DEF = [
@@ -647,11 +643,7 @@ $('#evAdd').addEventListener('click',()=>{ customN++; const di = evs.findIndex(e
 
 /* 소장 맨 끝(‘위 원고 ○○○’ 바로 위)에 들어가는 작성일 */
 function localISO(d){ return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
-function docDateText(v){
-  const iso = v.docDate || localISO(new Date());
-  const [y,m] = iso.split('-').map(Number);
-  return v.dayBlank==='blank' ? `${y}.  ${m}.    .` : kd(iso);
-}
+function docDateText(){ return kd(localISO(new Date())); }
 
 /* ---------- 소장 생성 ---------- */
 function build(){
@@ -781,8 +773,6 @@ function update(){
     ? '쿠폰으로 받을 수 있었던 초회 점검(엔진오일 교환) 비용을 적습니다. 정비 영수증은 증거 목록에서 빠집니다.'
     : '쿠폰을 못 써서 엔진오일 교환 비용을 직접 낸 경우입니다. 정비 영수증을 증거로 첨부해 주세요.';
   // 작성일 안내
-  $('#dateHint').textContent = `소장 맨 끝, ‘위 원고 ${v.pName||'○○○'}’ 바로 위에 “${docDateText(v)}”로 적힙니다.`
-    + (v.dayBlank==='blank' ? ' 종이로 접수하는 날 ‘일’을 손으로 적을 때 고릅니다.' : ' 전자소송은 이대로 두면 됩니다.');
   // 증거 번호 표시 갱신
   const nums = evNumbers();
   $$('#evList .ev-item').forEach((el,i)=>{ const e=evs[i]; if(!e) return; el.querySelector('.no').textContent = nums[e.key]?`갑 제${nums[e.key]}호증`:'제외';
@@ -940,7 +930,7 @@ let clearArmed=false;
 $('#btnClear').addEventListener('click', e=>{
   if(!clearArmed){ clearArmed=true; e.target.textContent='한 번 더 누르면 지웁니다'; setTimeout(()=>{clearArmed=false; e.target.textContent='모두 지우기';},3000); return; }
   clearArmed=false; e.target.textContent='모두 지우기';
-  const keep = {dName:DEF.dName, dAddr:DEF.dAddr, dRep:DEF.dRep, dmgType:'refused', medMode:'ref', filing:'e', dayBlank:'full'};
+  const keep = {dName:DEF.dName, dAddr:DEF.dAddr, dRep:DEF.dRep, dmgType:'refused', medMode:'ref', filing:'e'};
   const blank = Object.fromEntries(Object.keys(DEF).map(k=>[k, typeof DEF[k]==='boolean'?false:'']));
   editedHtml = null; editMode = false;
   fillForm({...blank, ...keep}); evs = EV_DEF.map(x=>({...x})); renderEv(); update(); toast('입력을 지웠습니다');
