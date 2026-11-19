@@ -228,8 +228,7 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
     <div><h1>혼다 쿠폰 소장 작성기</h1><p>대한이륜차실사용자협회가 피해자들의 법적 절차를 돕기 위해 만들었습니다.</p></div>
   </div>
   <div class="actions">
-    <button class="btn" id="btnLawyer" type="button">담당변호사</button>
-    <button class="btn" id="btnGuide" type="button">안내·접수 방법·비용</button>
+    <button class="btn" id="btnGuide" type="button">안내·상담</button>
     <button class="btn primary" id="btnPdf" type="button">소장 PDF 다운로드</button>
   </div>
 </header>
@@ -375,13 +374,14 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
 </main>
 
 <dialog id="guide">
-  <div class="dlg-head"><h2>안내</h2><button class="btn sm" type="button" id="guideClose">닫기</button></div>
+  <div class="dlg-head"><h2>안내·상담</h2><button class="btn sm" type="button" id="guideClose">닫기</button></div>
   <div class="dlg-tabs" role="tablist">
     <button type="button" data-g="use" aria-selected="true">꼭 읽어 주세요</button>
     <button type="button" data-g="fee" aria-selected="false">비용</button>
     <button type="button" data-g="e" aria-selected="false">전자소송 접수</button>
     <button type="button" data-g="paper" aria-selected="false">방문 접수</button>
     <button type="button" data-g="after" aria-selected="false">접수 이후</button>
+    <button type="button" data-g="lawyer" aria-selected="false">담당변호사</button>
   </div>
   <div class="dlg-body">
     <section data-gp="use">
@@ -460,37 +460,34 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
       </ol>
       <p class="hint">이 작성기는 이실협 회원의 소송 준비를 돕는 서식 도구입니다. 개별 사정에 따라 내용을 고쳐야 할 수 있으니, 이상한 점은 협회 법률고문에게 문의해 주세요.</p>
     </section>
-  </div>
-</dialog>
 
-<dialog id="lawyerDlg" aria-labelledby="lwTitle">
-  <div class="dlg-head"><h2 id="lwTitle">담당변호사</h2><button class="btn sm" type="button" id="lawyerClose">닫기</button></div>
-  <div class="dlg-body about">
-    <div id="lwIntro">
-      <div class="profile"><img src="data:image/jpeg;base64,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" alt="김성훈 변호사" width="88" height="88"><div><span class="pname">김성훈 변호사</span><span class="poffice">대한이륜차실사용자협회 법률고문</span></div></div>
-      <h3>주요 분야</h3><ul><li>손해배상·형사법 (대한변협 인증 전문분야)</li><li>계약(매매·임대차)·산재·교통·가사·노동·면책·지적재산권</li><li>사건분석·법률컨설팅</li></ul>
-      <h3>경력·자격</h3><ul><li>변호사 · 변리사 · 세무사 · 공인중개사</li><li>사법시험 48회 · 사법연수원 39기</li><li>전 법무법인 서우인, 법무법인 안산 대표변호사</li><li>현 국립 안산마음건강센터 법률자문</li><li>전 서울중앙지방법원 조정위원</li><li>전 대한변호사협회 인권보고서 집필위원</li><li>전 경기도 소방공무원승진심사 위원</li><li>전 경기도의회 윤리위원회 자문위원</li><li>전 남양주시 정책보좌관·법률자문관</li><li>전 안산시 정신보건심의·심판위원</li><li>전 안산시의사회 법제이사</li><li>전 성남의료원 인사위원</li></ul>
-      <h3>저서</h3><ul><li>공인노무사 테마민법 (노무사 수험서)</li><li>테마민법 (공인중개사 수험서)</li></ul>
-      <div class="cta-row cta-end"><button class="btn primary" type="button" id="lwConsultOpen">상담 신청하기</button></div>
-    </div>
-    <div id="lwConsult" hidden>
-      <button class="btn sm ghost" type="button" id="lwBack">← 변호사 소개로</button>
-      <h3>상담 신청</h3>
-      <p class="cf-order">상담 신청은 접수된 순서대로 차례차례 답변드립니다. 신청이 몰리면 연락까지 시간이 걸릴 수 있으니 양해 부탁드립니다.</p>
-      <div id="cfForm" class="cf">
-        <div class="cf-grid">
-          <div class="f"><label for="cfName">이름</label><input id="cfName" maxlength="40" autocomplete="name"></div>
-          <div class="f"><label for="cfPhone">연락처</label><input id="cfPhone" type="tel" inputmode="tel" maxlength="13" autocomplete="tel-national" placeholder="010-0000-0000"></div>
-        </div>
-        <div class="f"><label for="cfEmail">이메일 <small>(선택)</small></label><input id="cfEmail" type="email" inputmode="email" maxlength="120" autocomplete="email" placeholder="example@email.com"></div>
-        <div class="f"><label for="cfMsg">상담 내용</label><textarea id="cfMsg" rows="6" maxlength="3000" placeholder="예: 쿠폰을 쓰기 전에 말소됐는데 소송을 해도 되는지 궁금합니다."></textarea></div>
-        <label class="chk"><input type="checkbox" id="cfDraft"> 지금 작성 중인 소장 내용(청구금액·피해 유형 등)을 함께 보내기</label>
-        <input type="text" id="cfWebsite" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <label class="chk"><input type="checkbox" id="cfAgree"> <span>개인정보 수집·이용에 동의합니다.<small>수집 항목: 이름, 연락처, 이메일, 상담 내용 / 목적: 상담 회신 / 보관: 상담 종료 후 1년이 지나면 파기. 신청 내용은 메일 전달 서비스(Web3Forms, 인도)를 거쳐 변호사 메일로 전달됩니다.</small></span></label>
-        <div class="cta-row"><button class="btn primary" type="button" id="cfSend">보내기</button><span class="cf-out" id="cfOut" aria-live="polite"></span></div>
-        <div id="cfFallback"></div>
+    <section data-gp="lawyer" class="about" hidden>
+      <div id="lwIntro">
+        <div class="profile"><img src="data:image/jpeg;base64,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" alt="김성훈 변호사" width="88" height="88"><div><span class="pname">김성훈 변호사</span><span class="poffice">대한이륜차실사용자협회 법률고문</span></div></div>
+        <h3>주요 분야</h3><ul><li>손해배상·형사법 (대한변협 인증 전문분야)</li><li>계약(매매·임대차)·산재·교통·가사·노동·면책·지적재산권</li><li>사건분석·법률컨설팅</li></ul>
+        <h3>경력·자격</h3><ul><li>변호사 · 변리사 · 세무사 · 공인중개사</li><li>사법시험 48회 · 사법연수원 39기</li><li>전 법무법인 서우인, 법무법인 안산 대표변호사</li><li>현 국립 안산마음건강센터 법률자문</li><li>전 서울중앙지방법원 조정위원</li><li>전 대한변호사협회 인권보고서 집필위원</li><li>전 경기도 소방공무원승진심사 위원</li><li>전 경기도의회 윤리위원회 자문위원</li><li>전 남양주시 정책보좌관·법률자문관</li><li>전 안산시 정신보건심의·심판위원</li><li>전 안산시의사회 법제이사</li><li>전 성남의료원 인사위원</li></ul>
+        <h3>저서</h3><ul><li>공인노무사 테마민법 (노무사 수험서)</li><li>테마민법 (공인중개사 수험서)</li></ul>
+        <div class="cta-row cta-end"><button class="btn primary" type="button" id="lwConsultOpen">상담 신청하기</button></div>
       </div>
-    </div>
+      <div id="lwConsult" hidden>
+        <button class="btn sm ghost" type="button" id="lwBack">← 변호사 소개로</button>
+        <h3>상담 신청</h3>
+        <p class="cf-order">상담 신청은 접수된 순서대로 차례차례 답변드립니다. 신청이 몰리면 연락까지 시간이 걸릴 수 있으니 양해 부탁드립니다.</p>
+        <div id="cfForm" class="cf">
+          <div class="cf-grid">
+            <div class="f"><label for="cfName">이름</label><input id="cfName" maxlength="40" autocomplete="name"></div>
+            <div class="f"><label for="cfPhone">연락처</label><input id="cfPhone" type="tel" inputmode="tel" maxlength="13" autocomplete="tel-national" placeholder="010-0000-0000"></div>
+          </div>
+          <div class="f"><label for="cfEmail">이메일 <small>(선택)</small></label><input id="cfEmail" type="email" inputmode="email" maxlength="120" autocomplete="email" placeholder="example@email.com"></div>
+          <div class="f"><label for="cfMsg">상담 내용</label><textarea id="cfMsg" rows="6" maxlength="3000" placeholder="예: 쿠폰을 쓰기 전에 말소됐는데 소송을 해도 되는지 궁금합니다."></textarea></div>
+          <label class="chk"><input type="checkbox" id="cfDraft"> 지금 작성 중인 소장 내용(청구금액·피해 유형 등)을 함께 보내기</label>
+          <input type="text" id="cfWebsite" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <label class="chk"><input type="checkbox" id="cfAgree"> <span>개인정보 수집·이용에 동의합니다.<small>수집 항목: 이름, 연락처, 이메일, 상담 내용 / 목적: 상담 회신 / 보관: 상담 종료 후 1년이 지나면 파기. 신청 내용은 메일 전달 서비스(Web3Forms, 인도)를 거쳐 변호사 메일로 전달됩니다.</small></span></label>
+          <div class="cta-row"><button class="btn primary" type="button" id="cfSend">보내기</button><span class="cf-out" id="cfOut" aria-live="polite"></span></div>
+          <div id="cfFallback"></div>
+        </div>
+      </div>
+    </section>
   </div>
 </dialog>
 
@@ -972,7 +969,7 @@ $('#btnRebuild').addEventListener('click', e=>{
 /* ---------- 담당변호사 · 상담 신청 ---------- */
 const MAIL_TO = "lawdesk@daum.net";
 const W3F_KEY = "57d9b1b8-d477-4c1a-aeb1-09ec18d2c570";
-const lw = $('#lawyerDlg');
+const lw = $('#guide');
 function lwShow(consult){
   $('#lwIntro').hidden = consult; $('#lwConsult').hidden = !consult;
   lw.querySelector('.dlg-body').scrollTop = 0;
@@ -983,9 +980,7 @@ function lwShow(consult){
     $('#cfName').focus();
   }
 }
-$('#btnLawyer').addEventListener('click', ()=>{ lwShow(false); lw.showModal(); });
-$('#lawyerClose').addEventListener('click', ()=>lw.close());
-lw.addEventListener('click', e=>{ if(e.target===lw) lw.close(); });
+document.querySelector('.dlg-tabs button[data-g="lawyer"]').addEventListener('click', ()=>lwShow(false));
 $('#lwConsultOpen').addEventListener('click', ()=>lwShow(true));
 $('#lwBack').addEventListener('click', ()=>lwShow(false));
 $('#cfPhone').addEventListener('input', phoneInput);
