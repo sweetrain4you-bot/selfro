@@ -244,7 +244,6 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
 
 <main class="wrap">
 <form class="form" id="form" autocomplete="on">
-  <div class="notice-bar"><span>이 사이트는 소송 준비를 돕는 도구이며 법적 효력이나 결과를 보장하지 않습니다.</span><button type="button" class="btn sm" id="btnNotice">꼭 읽어 주세요</button></div>
   <p class="hint" style="margin:0 0 12px">입력한 내용은 이 브라우저 안에서만 처리되며 어디로도 전송되지 않습니다. 처음에 채워진 값은 <b>예시</b>이니 본인 정보로 바꿔 주세요. <button type="button" class="btn ghost sm" id="btnClear">모두 지우기</button></p>
 
   <details class="sec" open>
@@ -1096,7 +1095,6 @@ $('#cfSend').addEventListener('click', async ()=>{
 const dlg = $('#guide');
 function openGuide(tab){ fees(); const b = document.querySelector(`.dlg-tabs button[data-g="${tab}"]`); if(b) b.click(); dlg.showModal(); }
 $('#btnGuide').addEventListener('click', ()=>openGuide('use'));
-$('#btnNotice').addEventListener('click', ()=>openGuide('use'));
 $('#guideClose').addEventListener('click', ()=>dlg.close());
 dlg.addEventListener('click', e=>{ if(e.target===dlg) dlg.close(); });
 $$('.dlg-tabs button').forEach(b=>b.addEventListener('click',()=>{
