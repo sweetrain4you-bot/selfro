@@ -147,6 +147,11 @@ dialog{border:0;border-radius:14px;padding:0;width:min(860px,calc(100vw - 32px))
 .about .profile p{margin:0}
 .about h3{color:var(--ink)}
 .cta-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0 4px}
+.howto{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:10px 12px;font-size:12.5px;line-height:1.6}
+.howto ol{margin:4px 0 6px;padding-left:1.2em}
+.howto li{margin:0}
+.howto p{margin:0;color:var(--muted)}
+.howto a{color:var(--ink)}
 .cta-end{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
 .cta-row .muted{color:var(--muted);font-size:13px}
 .cf{display:grid;gap:12px}
@@ -332,11 +337,19 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
         <div class="f"><label for="dayBlank">작성일 적는 방식</label><select id="dayBlank" name="dayBlank"><option value="full">날짜를 모두 적기</option><option value="blank">‘일’만 비워 두기</option></select></div>
       </div>
       <p class="hint" id="dateHint"></p>
-      <label class="chk"><input type="checkbox" id="add390" name="add390"> 채무불이행(민법 제390조) 주장 추가 — 조정위원회 결정의 근거 조문</label>
       <div class="f"><label for="dName">피고 상호</label><input id="dName" name="dName"></div>
       <div class="f"><label for="dAddr">피고 본점 주소</label><input id="dAddr" name="dAddr"></div>
       <div class="f"><label for="dRep">대표이사</label><input id="dRep" name="dRep"></div>
-      <p class="hint">피고 정보는 법인등기사항증명서와 맞는지 접수 전에 확인해 주세요.</p>
+      <div class="howto">
+        <b>피고 법인등기부등본 떼는 법</b>
+        <ol>
+          <li><a href="https://www.iros.go.kr" target="_blank" rel="noopener">인터넷등기소(iros.go.kr)</a> 접속 → 로그인</li>
+          <li>열람·발급 → <b>법인</b> → 상호에 ‘혼다코리아’ 검색</li>
+          <li>‘혼다코리아 주식회사’(본점 서울 강남구) 선택 → 등기사항전부증명서(현재 유효사항) 발급</li>
+          <li>수수료 1,000원 결제 → 전자소송은 PDF로 저장해 첨부, 방문 접수는 출력 1통</li>
+        </ol>
+        <p>등본의 상호·본점 주소·대표이사가 위 칸과 다르면 등본대로 고쳐 주세요.</p>
+      </div>
     </div>
   </details>
 </form>
@@ -528,7 +541,7 @@ const DEF = {
   buyDate:"2023-10-25", regNo:"대구수성 카0000", model:"", dealer:"주식회사 ○○모터스",
   dmgType:"refused", visitDate:"2025-08-27", amount:"200000",
   medMode:"ref", medNo:"", medDate:"", medAmt:"", extra:"",
-  filing:"e", docDate:"", dayBlank:"full", add390:false,
+  filing:"e", docDate:"", dayBlank:"full",
   dName:"혼다코리아 주식회사", dAddr:"서울 강남구 테헤란로114길 38, 13층(대치동)", dRep:"이지홍"
 };
 const EV_DEF = [
@@ -672,7 +685,6 @@ function build(){
       : `피고의 일방적인 이 사건 쿠폰 말소로 인하여 원고는 ${D(v.visitDate)} 이 사건 쿠폰으로 무상으로 받을 수 있었던 엔진오일 교환 비용 ${amtTxt}을 지출하는 손해를 입었습니다${ref('receipt')}.`,
     `이러한 원고의 손해는 피고가 소비자에게 알리지 않고 일방적으로 쿠폰을 말소하여 발생한 것이므로 피고의 행위는 민법 제750조의 불법행위에 해당합니다. 또한 피고는 제품 판매 시 부담하였던 쿠폰 금액 상당의 이익을 법률상 원인 없이 얻었으므로, 이는 민법 제741조의 부당이득이 됩니다.`
   ];
-  if(v.add390) p3.push(`나아가 피고는 이 사건 이륜차 판매에 수반하여 이 사건 쿠폰에 따른 점검을 제공하기로 약정하였음에도 이를 일방적으로 소멸시켜 그 이행을 거절하였으므로, 민법 제390조에 따른 채무불이행 책임도 부담합니다.`);
   R.push({h:'3. 원고가 입은 손해와 피고의 배상의무', p:p3});
   const reason = `소비자분쟁조정위원회는 이 사건 쿠폰에 별도의 유효기간이 표기되어 있지 않은 점, 피고가 소비자에게 불리한 정책 변경을 단순히 홈페이지에 게시한 것만으로 그 책임을 다하였다고 보기 어려운 점, 피고가 쿠폰 사용 정책 변경을 소비자에게 안내한 사실을 입증할 자료를 제출하지 못한 점을 들어 피고의 과실을 인정하였습니다.`;
   if(v.medMode==='own'){
