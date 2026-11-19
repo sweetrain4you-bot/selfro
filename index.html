@@ -277,7 +277,7 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
       </div>
       <div class="row">
         <div class="f" id="visitWrap"><label for="visitDate">쿠폰 사용을 거절당한 날</label><input type="date" id="visitDate" name="visitDate"></div>
-        <div class="f"><label for="amount" id="amountLabel">대신 지출한 금액 = 청구금액 (원)</label><input id="amount" name="amount" inputmode="numeric" placeholder="88,000"></div>
+        <div class="f"><label for="amount" id="amountLabel">대신 지출한 금액 = 청구금액 (원)</label><input id="amount" name="amount" inputmode="numeric" placeholder="200,000"></div>
       </div>
       <p class="hint" id="dmgHint"></p>
     </div>
@@ -526,7 +526,7 @@ function findCourt(addr){
 const DEF = {
   pName:"홍길동", pPhone:"", pAddr:"대구 수성구 범어로 00", pAddrDetail:"000호", pAddrRef:"",
   buyDate:"2023-10-25", regNo:"대구수성 카0000", model:"", dealer:"주식회사 ○○모터스",
-  dmgType:"refused", visitDate:"2025-08-27", amount:"88000",
+  dmgType:"refused", visitDate:"2025-08-27", amount:"200000",
   medMode:"ref", medNo:"", medDate:"", medAmt:"", extra:"",
   filing:"e", docDate:"", dayBlank:"full", add390:false,
   dName:"혼다코리아 주식회사", dAddr:"서울 강남구 테헤란로114길 38, 13층(대치동)", dRep:"이지홍"
@@ -662,7 +662,7 @@ function build(){
     unused
       ? `그런데 피고는 ${REVOKE} 원고가 아직 사용하지 않은 이 사건 쿠폰의 사용 권한을 원고에게 알리지 않은 채 일방적으로 말소하였습니다. 이로써 원고는 더 이상 이 사건 쿠폰을 사용할 수 없게 되었습니다.`
       : `원고는 ${D(v.visitDate)} 이 사건 이륜차의 엔진오일 교환을 위하여 피고 제품을 취급하는 정비업소에 방문하여 이 사건 쿠폰의 사용을 요청하였으나, 피고가 이미 ${REVOKE} 원고의 이 사건 쿠폰의 사용 권한을 일방적으로 말소하였다는 사실을 그때 처음 알게 되었습니다.`,
-    `피고는 쿠폰 사용 정책이 바뀌었고 이를 홈페이지에 게시하였다고 주장하나, 원고는 쿠폰 말소에 관하여 피고로부터 어떠한 개별 통지나 안내도 받은 사실이 없습니다.`
+    `원고는 쿠폰 말소에 관하여 피고로부터 어떠한 개별 통지나 안내도 받은 사실이 없습니다.`
   ];
   const extra = (v.extra||'').split(/\n+/).map(s=>s.trim()).filter(Boolean).map(s=>`<span class="user">${esc(s)}</span>`);
   R.push({h:'2. 피고의 일방적 쿠폰 말소', p:p2.concat(extra)});
