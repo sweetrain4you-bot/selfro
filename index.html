@@ -208,7 +208,7 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
     <div class="body">
       <div class="row">
         <div class="f"><label for="pName">성명</label><input id="pName" name="pName"></div>
-        <div class="f"><label for="pPhone">연락처 (선택)</label><input id="pPhone" name="pPhone" inputmode="tel" placeholder="010-0000-0000"></div>
+        <div class="f"><label for="pPhone">연락처 (선택)</label><input id="pPhone" name="pPhone" type="tel" inputmode="tel" maxlength="13" autocomplete="tel-national" placeholder="010-0000-0000"></div>
       </div>
       <div class="f"><label for="pAddr">주소 (주민등록상 주소)</label>
         <div class="addr-row"><input id="pAddr" name="pAddr" placeholder="오른쪽 버튼으로 도로명주소를 찾으세요"><button type="button" class="btn" id="btnAddr">도로명주소 검색</button></div>
@@ -864,6 +864,25 @@ $('#btnAddr').addEventListener('click', async e=>{
 });
 $('#addrClose').addEventListener('click', ()=>addrDlg.close());
 $('#pAddr').addEventListener('input', ()=>{ $('#pAddrRef').value=''; });
+function fmtPhone(s){
+  const d = s.replace(/\D/g,'').slice(0,11);
+  if(/^(15|16|18)\d{2}/.test(d)) return d.length>4 ? `${d.slice(0,4)}-${d.slice(4,8)}` : d;   // 1588-0000
+  const a = d.startsWith('02') ? 2 : 3;                       // 02 / 010·031 등
+  if(d.length <= a) return d;
+  const rest = d.slice(a);
+  const midLen = (d.length - a) > 7 ? 4 : 3;                   // 10~11자리면 가운데 4자리
+  if(rest.length <= midLen) return `${d.slice(0,a)}-${rest}`;
+  return `${d.slice(0,a)}-${rest.slice(0,midLen)}-${rest.slice(midLen,midLen+4)}`;
+}
+$('#pPhone').addEventListener('input', e=>{
+  const el = e.target, pos = el.selectionStart ?? el.value.length;
+  const digitsBefore = el.value.slice(0,pos).replace(/\D/g,'').length;
+  const out = fmtPhone(el.value);
+  if(out === el.value) return;
+  el.value = out;
+  let i=0, n=0; while(i<out.length && n<digitsBefore){ if(/\d/.test(out[i])) n++; i++; }
+  try{ el.setSelectionRange(i,i); }catch(_){}
+});
 if(saved && Array.isArray(saved.ev)) evs = saved.ev.map(e=>({...e, custom: e.key && e.key.startsWith('c') && !EV_DEF.some(d=>d.key===e.key), files:[]}));
 renderEv(); update();
 
