@@ -673,7 +673,12 @@ function build(){
   const v = readForm();
   const amt = num(v.amount);
   const nums = evNumbers();
-  const ref = k => nums[k] ? `(갑 제${nums[k]}호증)` : '';
+  const ref = k => {
+    if(!nums[k]) return '';
+    const e = evs.find(x=>x.key===k);
+    const nm = e ? (k==='decision' ? '소비자분쟁조정위원회 결정문' : (e.name||'').trim()) : '';
+    return `(갑 제${nums[k]}호증${nm?' '+esc(nm):''})`;
+  };
   const auto = findCourt(v.pAddr);
   const court = (auto && auto.court) || '';
   const fullAddr = v.pAddr ? v.pAddr + (v.pAddrDetail?`, ${v.pAddrDetail}`:'') + (v.pAddrRef?` ${v.pAddrRef}`:'') : '';
