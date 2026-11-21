@@ -373,6 +373,7 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
     <button type="button" data-g="paper" aria-selected="false">방문 접수</button>
     <button type="button" data-g="after" aria-selected="false">접수 이후</button>
     <button type="button" data-g="lawyer" aria-selected="false">담당변호사</button>
+    <button type="button" data-g="consult" aria-selected="false">상담 신청</button>
   </div>
   <div class="dlg-body">
     <section data-gp="use">
@@ -458,11 +459,11 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
         <h3>주요 분야</h3><ul><li>손해배상·형사법 (대한변협 인증 전문분야)</li><li>계약(매매·임대차)·산재·교통·가사·노동·면책·지적재산권</li><li>사건분석·법률컨설팅</li></ul>
         <h3>경력·자격</h3><ul><li>변호사 · 변리사 · 세무사 · 공인중개사</li><li>사법시험 48회 · 사법연수원 39기</li><li>전 법무법인 서우인, 법무법인 안산 대표변호사</li><li>현 국립 안산마음건강센터 법률자문</li><li>전 서울중앙지방법원 조정위원</li><li>전 대한변호사협회 인권보고서 집필위원</li><li>전 경기도 소방공무원승진심사 위원</li><li>전 경기도의회 윤리위원회 자문위원</li><li>전 남양주시 정책보좌관·법률자문관</li><li>전 안산시 정신보건심의·심판위원</li><li>전 안산시의사회 법제이사</li><li>전 성남의료원 인사위원</li></ul>
         <h3>저서</h3><ul><li>공인노무사 테마민법 (노무사 수험서)</li><li>테마민법 (공인중개사 수험서)</li></ul>
-        <div class="cta-row cta-end"><button class="btn primary" type="button" id="lwConsultOpen">상담 신청하기</button></div>
       </div>
-      <div id="lwConsult" hidden>
-        <button class="btn sm ghost" type="button" id="lwBack">← 변호사 소개로</button>
-        <h3>상담 신청</h3>
+    </section>
+
+    <section data-gp="consult" hidden>
+      <div id="lwConsult">
         <p class="cf-order">상담은 <b>이메일 회신을 원칙</b>으로 합니다. 접수된 순서대로 차례차례 적어 주신 이메일로 답변드리며, 신청이 몰리면 답변까지 시간이 걸릴 수 있으니 양해 부탁드립니다.</p>
         <div id="cfForm" class="cf">
           <div class="cf-grid">
@@ -952,19 +953,13 @@ $('#btnRebuild').addEventListener('click', e=>{
 const MAIL_TO = "lawdesk@daum.net";
 const W3F_KEY = "57d9b1b8-d477-4c1a-aeb1-09ec18d2c570";
 const lw = $('#guide');
-function lwShow(consult){
-  $('#lwIntro').hidden = consult; $('#lwConsult').hidden = !consult;
+function consultPrefill(){
   lw.querySelector('.dlg-body').scrollTop = 0;
-  if(consult){
-    const v = readForm();
-    if(!$('#cfName').value && v.pName && v.pName!==DEF.pName) $('#cfName').value = v.pName;
-    if(!$('#cfPhone').value && v.pPhone) $('#cfPhone').value = v.pPhone;
-    $('#cfName').focus();
-  }
+  const v = readForm();
+  if(!$('#cfName').value && v.pName && v.pName!==DEF.pName) $('#cfName').value = v.pName;
+  if(!$('#cfPhone').value && v.pPhone) $('#cfPhone').value = v.pPhone;
 }
-document.querySelector('.dlg-tabs button[data-g="lawyer"]').addEventListener('click', ()=>lwShow(false));
-$('#lwConsultOpen').addEventListener('click', ()=>lwShow(true));
-$('#lwBack').addEventListener('click', ()=>lwShow(false));
+document.querySelector('.dlg-tabs button[data-g="consult"]').addEventListener('click', consultPrefill);
 $('#cfPhone').addEventListener('input', phoneInput);
 function draftSummary(){
   const v = readForm(), amt = num(v.amount);
