@@ -463,17 +463,17 @@ code.addr{background:var(--bg);border:1px solid var(--line);border-radius:6px;pa
       <div id="lwConsult" hidden>
         <button class="btn sm ghost" type="button" id="lwBack">← 변호사 소개로</button>
         <h3>상담 신청</h3>
-        <p class="cf-order">상담 신청은 접수된 순서대로 차례차례 답변드립니다. 신청이 몰리면 연락까지 시간이 걸릴 수 있으니 양해 부탁드립니다.</p>
+        <p class="cf-order">상담은 <b>이메일 회신을 원칙</b>으로 합니다. 접수된 순서대로 차례차례 적어 주신 이메일로 답변드리며, 신청이 몰리면 답변까지 시간이 걸릴 수 있으니 양해 부탁드립니다.</p>
         <div id="cfForm" class="cf">
           <div class="cf-grid">
             <div class="f"><label for="cfName">이름</label><input id="cfName" maxlength="40" autocomplete="name"></div>
-            <div class="f"><label for="cfPhone">연락처</label><input id="cfPhone" type="tel" inputmode="tel" maxlength="13" autocomplete="tel-national" placeholder="010-0000-0000"></div>
+            <div class="f"><label for="cfEmail">회신받을 이메일</label><input id="cfEmail" type="email" inputmode="email" maxlength="120" autocomplete="email" placeholder="example@email.com"></div>
           </div>
-          <div class="f"><label for="cfEmail">이메일 <small>(선택)</small></label><input id="cfEmail" type="email" inputmode="email" maxlength="120" autocomplete="email" placeholder="example@email.com"></div>
+          <div class="f"><label for="cfPhone">전화번호 <small>(선택)</small></label><input id="cfPhone" type="tel" inputmode="tel" maxlength="13" autocomplete="tel-national" placeholder="010-0000-0000"></div>
           <div class="f"><label for="cfMsg">상담 내용</label><textarea id="cfMsg" rows="6" maxlength="3000" placeholder="예: 쿠폰을 쓰기 전에 말소됐는데 소송을 해도 되는지 궁금합니다."></textarea></div>
           <label class="chk"><input type="checkbox" id="cfDraft"> 지금 작성 중인 소장 내용(청구금액·피해 유형 등)을 함께 보내기</label>
           <input type="text" id="cfWebsite" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-          <label class="chk"><input type="checkbox" id="cfAgree"> <span>개인정보 수집·이용에 동의합니다.<small>수집 항목: 이름, 연락처, 이메일, 상담 내용 / 목적: 상담 회신 / 보관: 상담 종료 후 1년이 지나면 파기. 신청 내용은 메일 전달 서비스(Web3Forms, 인도)를 거쳐 변호사 메일로 전달됩니다.</small></span></label>
+          <label class="chk"><input type="checkbox" id="cfAgree"> <span>개인정보 수집·이용에 동의합니다.<small>수집 항목: 이름, 이메일, 전화번호(선택), 상담 내용 / 목적: 상담 회신 / 보관: 상담 종료 후 1년이 지나면 파기. 신청 내용은 메일 전달 서비스(Web3Forms, 인도)를 거쳐 변호사 메일로 전달됩니다.</small></span></label>
           <div class="cta-row"><button class="btn primary" type="button" id="cfSend">보내기</button><span class="cf-out" id="cfOut" aria-live="polite"></span></div>
           <div id="cfFallback"></div>
         </div>
@@ -982,26 +982,26 @@ $('#cfSend').addEventListener('click', async ()=>{
   const phone=$('#cfPhone').value.trim(), email=$('#cfEmail').value.trim(), msg=$('#cfMsg').value.trim();
   out.className='cf-out err';
   if(!name){ out.textContent='이름을 적어 주세요.'; $('#cfName').focus(); return; }
-  if(phone.replace(/\D/g,'').length<9){ out.textContent='연락받을 전화번호를 적어 주세요.'; $('#cfPhone').focus(); return; }
-  if(email && !/^[^@\s<>,;"]+@[^@\s<>,;"]+\.[A-Za-z]{2,}$/.test(email)){ out.textContent='이메일 주소를 확인해 주세요.'; $('#cfEmail').focus(); return; }
+  if(!/^[^@\s<>,;"]+@[^@\s<>,;"]+\.[A-Za-z]{2,}$/.test(email)){ out.textContent=email?'이메일 주소를 확인해 주세요.':'회신받을 이메일을 적어 주세요.'; $('#cfEmail').focus(); return; }
+  if(phone && phone.replace(/\D/g,'').length<9){ out.textContent='전화번호를 확인해 주세요.'; $('#cfPhone').focus(); return; }
   if(msg.length<5){ out.textContent='상담 내용을 적어 주세요.'; $('#cfMsg').focus(); return; }
   if(!$('#cfAgree').checked){ out.textContent='개인정보 수집·이용에 동의해 주세요.'; return; }
   if($('#cfWebsite').value){ out.textContent='보내지 못했어요.'; return; }
   const sentAt=new Date().toLocaleString('ko-KR',{timeZone:'Asia/Seoul'});
-  const subject=`[혼다 쿠폰 소장] 상담 신청 - ${name} / ${phone}`;
-  const body=[`신청 시각: ${sentAt}`,`이름: ${name}`,`연락처: ${phone}`,`이메일: ${email||'(적지 않음)'}`,'','[상담 내용]',msg.slice(0,3000)]
+  const subject=`[혼다 쿠폰 소장] 상담 신청 - ${name} / ${email}`;
+  const body=[`신청 시각: ${sentAt}`,`이름: ${name}`,`회신받을 이메일: ${email}`,`전화번호: ${phone||'(적지 않음)'}`,'','[상담 내용]',msg.slice(0,3000)]
     .concat($('#cfDraft').checked?['',draftSummary()]:[]).join('\n');
   send.disabled=true; out.className='cf-out'; out.textContent='보내는 중…';
   try{
     const ctl=new AbortController(), tm=setTimeout(()=>ctl.abort(),12000);
     const res=await fetch('https://api.web3forms.com/submit',{method:'POST',signal:ctl.signal,
       headers:{'Content-Type':'application/json',Accept:'application/json'},
-      body:JSON.stringify({access_key:W3F_KEY,subject,from_name:'혼다 쿠폰 소장 작성기',...(email?{email,replyto:email}:{}),botcheck:false,
-        message:body+'\n\n--\n셀프로.kr 혼다 쿠폰 소장 작성기의 상담 신청입니다.\n개인정보는 동의받은 목적(상담 회신) 외에 쓰지 마세요.'})});
+      body:JSON.stringify({access_key:W3F_KEY,subject,from_name:'혼다 쿠폰 소장 작성기',email,replyto:email,botcheck:false,
+        message:body+'\n\n--\n셀프로.kr 혼다 쿠폰 소장 작성기의 상담 신청입니다.\n개인정보는 동의받은 목적(상담 회신) 외에 쓰지 마세요. [답장]을 누르면 신청자 이메일로 회신됩니다.'})});
     clearTimeout(tm);
     const r=await res.json().catch(()=>({}));
     if(!res.ok || r.success===false) throw new Error('rejected');
-    $('#cfForm').innerHTML=`<p class="cf-done">상담 신청이 접수되었습니다.</p><p class="cf-out">접수된 순서대로 차례차례, 적어 주신 연락처(${esc(phone)})로 연락드리겠습니다.</p>`;
+    $('#cfForm').innerHTML=`<p class="cf-done">상담 신청이 접수되었습니다.</p><p class="cf-out">접수된 순서대로 차례차례, 적어 주신 이메일(${esc(email)})로 답변드리겠습니다.</p>`;
   }catch(err){
     send.disabled=false; out.className='cf-out err'; out.textContent='이 화면에서 바로 보내지 못했어요.';
     const mailto=`mailto:${MAIL_TO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body.slice(0,1800))}`;
